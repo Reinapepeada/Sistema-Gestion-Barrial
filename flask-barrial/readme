@@ -12,21 +12,15 @@ Para configurar el entorno de desarrollo, sigue estos pasos:
 
 3. Ejecuta el siguiente comando para crear un entorno virtual:
 
-    ```shell
     py -m venv .venv
-    ```
 
 4. Activa el entorno virtual ejecutando el siguiente comando:
 
-    ```shell
     .venv/scripts/activate
-    ```
 
 5. Instala las dependencias del proyecto ejecutando el siguiente comando:
 
-    ```shell
     pip install -r requirements.txt
-    ```
 
 ## Ejecución del proyecto
 
