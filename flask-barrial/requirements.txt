@@ -1,2 +1,2 @@
-SQKAlchemy
+SQLAlchemy
 Flask

@@ -18,6 +18,10 @@ Para configurar el entorno de desarrollo, sigue estos pasos:
 
     .venv/scripts/activate
 
+6. Asegurar que estas dentro del directorio flask-barrial
+
+    cd C:\Sistema-Gestion-Barrial\flask-barrial
+ 
 5. Instala las dependencias del proyecto ejecutando el siguiente comando:
 
     pip install -r requirements.txt
