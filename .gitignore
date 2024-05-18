@@ -1,2 +1,2 @@
-venv
-/app/__pycache__
+/flask-barrial/.venv
+/flask-barrial/app/__pycache__
