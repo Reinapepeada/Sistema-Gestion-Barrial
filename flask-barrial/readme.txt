@@ -29,3 +29,11 @@ Para configurar el entorno de desarrollo, sigue estos pasos:
 ## Ejecución del proyecto
 
 Una vez que hayas configurado el entorno, puedes ejecutar el proyecto Flask. Para hacerlo, ejecuta el siguiente comando:
+py run.py
+
+
+# Para configurar la base de datos
+
+1. Habilitar en el sql server el logueo por sql authentication
+2. correr el script para crear tablas y datos
+3. crear cuenta con usuario y contraseña en el archivo config.py(esta dentro de la url) 
