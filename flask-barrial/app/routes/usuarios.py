@@ -35,4 +35,9 @@ def first_login():
 def login():
     data = request.get_json()
     return UsuarioController.login(data)
+
+@usuarios_bp.route('/forgot-password', methods=['post'])
+def forgot_password():
+    data = request.get_json()
+    return UsuarioController.forgot_password(data)
     

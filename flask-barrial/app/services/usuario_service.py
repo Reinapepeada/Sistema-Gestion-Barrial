@@ -1,5 +1,5 @@
 from app import db
-from app.models.models import Vecino
+from app.models.models import Vecino,Personal
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # librerias para enviar correos y generar contraseñas temporales
@@ -50,6 +50,10 @@ class Usuario_service:
     
     @staticmethod
     def first_login(data):
+        # agregamos el prefijo "DNI" al documento
+        data['documento'] = 'DNI' + data['documento']
+
+        # Primero verificamos en la tabla de Personal
         vecino = db.session.execute(db.select(Vecino).filter_by(documento=data['documento'])).scalar()
         if vecino and vecino.documento == data['documento']:
             temporary_password = generate_temporary_password()
@@ -60,6 +64,7 @@ class Usuario_service:
             # actualizar la contraseña temporal en la base de datos
             print(hashed_password)
             vecino.password = hashed_password
+            vecino.email = data['email']
             db.session.commit()
             # convirtiendo el objeto vecino a un json
             vecino_json = vecino.to_dict()
@@ -67,7 +72,38 @@ class Usuario_service:
     
     @staticmethod
     def login(data):
+        # Primero verificamos en la tabla de Personal
+        personal = db.session.execute(db.select(Personal).filter_by(legajo=data['documento'])).scalar()
+        if personal and personal.password == data['password']:
+            return {
+                'user_type': 'personal',
+                'user_data': personal.to_dict()
+            }
+
+
+        # agregamos el prefijo "DNI" al documento porque asi esta en la base de datos
+        data['documento'] = 'DNI' + data['documento']
+        # Si no está en Personal, verificamos en la tabla de Vecino
         vecino = db.session.execute(db.select(Vecino).filter_by(documento=data['documento'])).scalar()
-        if vecino and check_password_hash(vecino.password, data['password']):
+        if vecino and check_password_hash(vecino.password_hash, data['password']):
+            return {
+                'user_type': 'vecino',
+                'user_data': vecino.to_dict()
+            }
+
+        raise ValueError("El email o la contraseña no corresponden a un usuario en el sistema")
+
+    @staticmethod
+    def forgot_password(data):
+        vecino = db.session.execute(db.select(Vecino).filter_by(documento=data['documento'])).scalar()
+        if vecino and vecino.email == data['email']:
+            temporary_password = generate_temporary_password()
+            message = f"Your temporary password is: {temporary_password}"
+            send_email(data['email'], "clave temporal", message)
+            # cifrar la contraseña temporal
+            hashed_password = generate_password_hash(temporary_password)
+            # actualizar la contraseña temporal en la base de datos
+            vecino.password = hashed_password
+            db.session.commit()
             return vecino.to_dict()
-        raise ValueError("El documento o la contraseña no corresponden a un usuario en el sistema")
+        raise ValueError("El documento o el email no corresponden a un usuario en el sistema")

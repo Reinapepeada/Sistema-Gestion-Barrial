@@ -47,13 +47,15 @@ class Vecino(db.Model):
     denuncias = db.relationship('Denuncia', backref='vecino', lazy=True)
     reclamos = db.relationship('Reclamo', backref='vecino', lazy=True)
     password = db.Column(db.String, nullable=True)
+    email = db.Column(db.String, nullable=True)
     
     def to_dict(self):
         return {
             'documento': self.documento,
             'nombre': self.nombre,
             'apellido': self.apellido,
-            'direccion': self.direccion
+            'direccion': self.direccion,
+            'email': self.email
         }
 
 class Denuncia(db.Model):
@@ -166,8 +168,6 @@ class Personal(db.Model):
             'legajo': self.legajo,
             'nombre': self.nombre,
             'apellido': self.apellido,
-            'documento': self.documento,
-            'password': self.password,
             'sector': self.sector,
             'categoria': self.categoria,
             'fechaIngreso': self.fechaIngreso
