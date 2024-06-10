@@ -1,7 +1,9 @@
 from flask import Blueprint, jsonify
 from app import db
+from flask import request
 from app.models.models import Vecino
-from sqlalchemy import select
+from app.controllers.usuario_controller import UsuarioController
+
 
 usuarios_bp = Blueprint('usuarios', __name__)
 
@@ -23,4 +25,14 @@ def all():
         })
     return jsonify(vecinos)
 
+@usuarios_bp.route('/first-login', methods=['post'])
+def first_login():
+    data = request.get_json()
+    print(data)
+    return UsuarioController.first_login(data)
+
+@usuarios_bp.route('/login', methods=['post'])
+def login():
+    data = request.get_json()
+    return UsuarioController.login(data)
     

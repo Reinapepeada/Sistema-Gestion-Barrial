@@ -6,17 +6,36 @@ class Desperfecto(db.Model):
     descripcion = db.Column(db.String, nullable=False)
     idRubro = db.Column(db.Integer, db.ForeignKey('rubros.idRubro'), nullable=False)
     
+    def to_dict(self):
+        return {
+            'idDesperfecto': self.idDesperfecto,
+            'descripcion': self.descripcion,
+            'idRubro': self.idRubro
+        }
+
 class Rubro(db.Model):
     __tablename__ = 'rubros'
     idRubro = db.Column(db.Integer, primary_key=True)
     descripcion = db.Column(db.String, nullable=False)
     desperfectos = db.relationship('Desperfecto', backref='rubro', lazy=True)
+    
+    def to_dict(self):
+        return {
+            'idRubro': self.idRubro,
+            'descripcion': self.descripcion
+        }
 
 class Barrio(db.Model):
     __tablename__ = 'barrios'
     idBarrio = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String, nullable=False)
     vecinos = db.relationship('Vecino', backref='barrio', lazy=True)
+    
+    def to_dict(self):
+        return {
+            'idBarrio': self.idBarrio,
+            'nombre': self.nombre
+        }
 
 class Vecino(db.Model):
     __tablename__ = 'vecinos'
@@ -27,6 +46,15 @@ class Vecino(db.Model):
     codigoBarrio = db.Column(db.Integer, db.ForeignKey('barrios.idBarrio'), nullable=False)
     denuncias = db.relationship('Denuncia', backref='vecino', lazy=True)
     reclamos = db.relationship('Reclamo', backref='vecino', lazy=True)
+    password = db.Column(db.String, nullable=True)
+    
+    def to_dict(self):
+        return {
+            'documento': self.documento,
+            'nombre': self.nombre,
+            'apellido': self.apellido,
+            'direccion': self.direccion
+        }
 
 class Denuncia(db.Model):
     __tablename__ = 'denuncias'
@@ -36,6 +64,16 @@ class Denuncia(db.Model):
     descripcion = db.Column(db.String, nullable=False)
     estado = db.Column(db.String, nullable=False)
     aceptaResponsabilidad = db.Column(db.Boolean, nullable=False)
+    
+    def to_dict(self):
+        return {
+            'idDenuncias': self.idDenuncias,
+            'documento': self.documento,
+            'idSitio': self.idSitio,
+            'descripcion': self.descripcion,
+            'estado': self.estado,
+            'aceptaResponsabilidad': self.aceptaResponsabilidad
+        }
 
 class Sitio(db.Model):
     __tablename__ = 'sitios'
@@ -53,6 +91,22 @@ class Sitio(db.Model):
     comentarios = db.Column(db.String, nullable=True)
     denuncias = db.relationship('Denuncia', backref='sitio', lazy=True)
     reclamos = db.relationship('Reclamo', backref='sitio', lazy=True)
+    
+    def to_dict(self):
+        return {
+            'idSitio': self.idSitio,
+            'latitud': self.latitud,
+            'longitud': self.longitud,
+            'calle': self.calle,
+            'numero': self.numero,
+            'entreCalleA': self.entreCalleA,
+            'entreCalleB': self.entreCalleB,
+            'descripcion': self.descripcion,
+            'aCargoDe': self.aCargoDe,
+            'apertura': self.apertura,
+            'cierre': self.cierre,
+            'comentarios': self.comentarios
+        }
 
 class Reclamo(db.Model):
     __tablename__ = 'reclamos'
@@ -65,6 +119,18 @@ class Reclamo(db.Model):
     idReclamoUnificado = db.Column(db.Integer, nullable=True)
     legajo = db.Column(db.Integer, db.ForeignKey('personal.legajo'), nullable=False)
     movimientos = db.relationship('MovimientoReclamo', backref='reclamo', lazy=True)
+    
+    def to_dict(self):
+        return {
+            'idReclamo': self.idReclamo,
+            'documento': self.documento,
+            'idSitio': self.idSitio,
+            'idDesperfecto': self.idDesperfecto,
+            'descripcion': self.descripcion,
+            'estado': self.estado,
+            'idReclamoUnificado': self.idReclamoUnificado,
+            'legajo': self.legajo
+        }
 
 class MovimientoReclamo(db.Model):
     __tablename__ = 'movimientosReclamo'
@@ -73,6 +139,15 @@ class MovimientoReclamo(db.Model):
     responsable = db.Column(db.String, nullable=False)
     causa = db.Column(db.String, nullable=False)
     fecha = db.Column(db.Date, nullable=False)
+    
+    def to_dict(self):
+        return {
+            'idMovimiento': self.idMovimiento,
+            'idReclamo': self.idReclamo,
+            'responsable': self.responsable,
+            'causa': self.causa,
+            'fecha': self.fecha
+        }
 
 class Personal(db.Model):
     __tablename__ = 'personal'
@@ -85,3 +160,15 @@ class Personal(db.Model):
     categoria = db.Column(db.String, nullable=False)
     fechaIngreso = db.Column(db.Date, nullable=False)
     reclamos = db.relationship('Reclamo', backref='personal', lazy=True)
+    
+    def to_dict(self):
+        return {
+            'legajo': self.legajo,
+            'nombre': self.nombre,
+            'apellido': self.apellido,
+            'documento': self.documento,
+            'password': self.password,
+            'sector': self.sector,
+            'categoria': self.categoria,
+            'fechaIngreso': self.fechaIngreso
+        }
