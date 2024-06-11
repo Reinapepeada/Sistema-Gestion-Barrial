@@ -29,7 +29,7 @@ class UsuarioController:
                 return usuario, 200
             return "usuario no encontrado", 404
         except Exception as e:
-            return str(e), 500
+            return str(e), 404
         
     @staticmethod
     def forgot_password(data):

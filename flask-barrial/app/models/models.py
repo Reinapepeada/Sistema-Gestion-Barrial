@@ -12,6 +12,25 @@ class Desperfecto(db.Model):
             'descripcion': self.descripcion,
             'idRubro': self.idRubro
         }
+    
+class Servicio(db.Model):
+    __tablename__ = 'servicios'
+    idServicio = db.Column(db.Integer, primary_key=True)
+    idVecino = db.Column(db.String, db.ForeignKey('vecinos.documento'), nullable=False)
+    fecha = db.Column(db.Date, nullable=False)
+    descripcion = db.Column(db.String, nullable=False)
+    hora = db.Column(db.Time, nullable=False)
+    idEstado = db.Column(db.Integer, db.ForeignKey('estados.idEstado'), nullable=False)
+    
+    def to_dict(self):
+        return {
+            'idServicio': self.idServicio,
+            'idVecino': self.idVecino,
+            'idReclamo': self.idReclamo,
+            'fecha': self.fecha,
+            'hora': self.hora,
+            'idEstado': self.idEstado
+        }
 
 class Rubro(db.Model):
     __tablename__ = 'rubros'

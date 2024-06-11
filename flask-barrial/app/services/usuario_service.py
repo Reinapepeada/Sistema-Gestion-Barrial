@@ -76,7 +76,7 @@ class Usuario_service:
         personal = db.session.execute(db.select(Personal).filter_by(legajo=data['documento'])).scalar()
         if personal and personal.password == data['password']:
             return {
-                'user_type': 'personal',
+                'user_type': 'inspector',
                 'user_data': personal.to_dict()
             }
 
@@ -85,7 +85,7 @@ class Usuario_service:
         data['documento'] = 'DNI' + data['documento']
         # Si no está en Personal, verificamos en la tabla de Vecino
         vecino = db.session.execute(db.select(Vecino).filter_by(documento=data['documento'])).scalar()
-        if vecino and check_password_hash(vecino.password_hash, data['password']):
+        if vecino and check_password_hash(vecino.password, data['password']):
             return {
                 'user_type': 'vecino',
                 'user_data': vecino.to_dict()
@@ -95,6 +95,7 @@ class Usuario_service:
 
     @staticmethod
     def forgot_password(data):
+        data['documento'] = 'DNI' + data['documento']
         vecino = db.session.execute(db.select(Vecino).filter_by(documento=data['documento'])).scalar()
         if vecino and vecino.email == data['email']:
             temporary_password = generate_temporary_password()
