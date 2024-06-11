@@ -19,6 +19,7 @@ class UsuarioController:
             usuario = Usuario_service.first_login(data)
             return usuario, 200
         except Exception as e:
+            print(e)
             return str(e), 500
         
     @staticmethod
@@ -29,6 +30,7 @@ class UsuarioController:
                 return usuario, 200
             return "usuario no encontrado", 404
         except Exception as e:
+            print(e)
             return str(e), 404
         
     @staticmethod

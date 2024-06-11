@@ -16,7 +16,7 @@ class Desperfecto(db.Model):
 
 class Foto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    servicio_id = db.Column(db.Integer, db.ForeignKey('servicio.id'), nullable=False)
+    servicio_id = db.Column(db.Integer, db.ForeignKey('servicios.id'), nullable=False)  # Updated ForeignKey
     ruta = db.Column(db.String(255), nullable=False)
 
     def to_dict(self):
@@ -36,10 +36,11 @@ class Servicio(db.Model):
     descripcion = db.Column(db.String, nullable=False)
     idEstado = db.Column(db.Integer, nullable=False)
     fotos = db.relationship('Foto', backref='servicio', lazy=True)
+
     def to_dict(self):
         return {
+            'id': self.id,  # Added id field to the dictionary
             'idVecino': self.idVecino,
-            'idServicio': self.idServicio,
             'titulo': self.titulo,
             'descripcion': self.descripcion,
             'fecha': self.fecha,
