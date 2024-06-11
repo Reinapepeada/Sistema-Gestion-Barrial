@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from app.controllers.servicio_controller import ServicioController
 
 servicios_bp = Blueprint('servicios', __name__)
@@ -10,12 +10,15 @@ def hello():
 @servicios_bp.route('/all', methods=['GET'])
 def get_all_servicios():
     servicios = ServicioController.get_all_servicios()
-    return jsonify([servicio.to_dict() for servicio in servicios])
+    return servicios
 
 @servicios_bp.route('/<string:idUser>', methods=['GET'])
 def get_servicios_by_user(idUser):
-    return jsonify({"message": f"get services by user {idUser}"})
+    servicios = ServicioController.get_servicios_by_user(idUser)
+    return servicios
 
 @servicios_bp.route('/create', methods=['POST'])
 def create_servicio():
-    return jsonify({"message": "create service"})
+    data = request.form.to_dict()
+    servicios = ServicioController.create_servicio(data)
+    return servicios

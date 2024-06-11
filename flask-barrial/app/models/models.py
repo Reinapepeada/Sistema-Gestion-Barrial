@@ -13,20 +13,35 @@ class Desperfecto(db.Model):
             'idRubro': self.idRubro
         }
     
-class Servicio(db.Model):
-    __tablename__ = 'servicios'
-    idServicio = db.Column(db.Integer, primary_key=True)
-    idVecino = db.Column(db.String, db.ForeignKey('vecinos.documento'), nullable=False)
-    fecha = db.Column(db.Date, nullable=False)
-    descripcion = db.Column(db.String, nullable=False)
-    hora = db.Column(db.Time, nullable=False)
-    idEstado = db.Column(db.Integer, db.ForeignKey('estados.idEstado'), nullable=False)
-    
+
+class Foto(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    servicio_id = db.Column(db.Integer, db.ForeignKey('servicio.id'), nullable=False)
+    ruta = db.Column(db.String(255), nullable=False)
+
     def to_dict(self):
         return {
-            'idServicio': self.idServicio,
+            'id': self.id,
+            'servicio_id': self.servicio_id,
+            'ruta': self.ruta
+        }
+
+class Servicio(db.Model):
+    __tablename__ = 'servicios'
+    id = db.Column(db.Integer, primary_key=True)
+    idVecino = db.Column(db.Integer, nullable=False)
+    titulo = db.Column(db.String, nullable=False)
+    fecha = db.Column(db.Date, nullable=False)
+    hora = db.Column(db.Time, nullable=False)
+    descripcion = db.Column(db.String, nullable=False)
+    idEstado = db.Column(db.Integer, nullable=False)
+    fotos = db.relationship('Foto', backref='servicio', lazy=True)
+    def to_dict(self):
+        return {
             'idVecino': self.idVecino,
-            'idReclamo': self.idReclamo,
+            'idServicio': self.idServicio,
+            'titulo': self.titulo,
+            'descripcion': self.descripcion,
             'fecha': self.fecha,
             'hora': self.hora,
             'idEstado': self.idEstado
