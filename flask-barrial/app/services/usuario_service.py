@@ -108,3 +108,14 @@ class Usuario_service:
             db.session.commit()
             return vecino.to_dict()
         raise ValueError("El documento o el email no corresponden a un usuario en el sistema")
+    
+    @staticmethod
+    def change_password(data):
+        data['documento'] = 'DNI' + data['documento']
+        vecino = db.session.execute(db.select(Vecino).filter_by(documento=data['documento'])).scalar()
+        if vecino and check_password_hash(vecino.password, data['old_password']):
+            hashed_password = generate_password_hash(data['new_password'])
+            vecino.password = hashed_password
+            db.session.commit()
+            return vecino.to_dict()
+        raise ValueError("El documento o la contraseña actual no corresponden a un usuario en el sistema")
