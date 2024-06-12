@@ -97,20 +97,21 @@ class Usuario_service:
     def forgot_password(data):
         data['documento'] = 'DNI' + data['documento']
         vecino = db.session.execute(db.select(Vecino).filter_by(documento=data['documento'])).scalar()
-        if vecino and vecino.email == data['email']:
+        if vecino:
             temporary_password = generate_temporary_password()
             message = f"Your temporary password is: {temporary_password}"
-            send_email(data['email'], "clave temporal", message)
+            send_email(vecino.email, "clave temporal", message)
             # cifrar la contraseña temporal
             hashed_password = generate_password_hash(temporary_password)
             # actualizar la contraseña temporal en la base de datos
             vecino.password = hashed_password
             db.session.commit()
             return vecino.to_dict()
-        raise ValueError("El documento o el email no corresponden a un usuario en el sistema")
+        raise ValueError("El documento no corresponde a un usuario en el sistema")
     
     @staticmethod
     def change_password(data):
+        print(data)
         data['documento'] = 'DNI' + data['documento']
         vecino = db.session.execute(db.select(Vecino).filter_by(documento=data['documento'])).scalar()
         if vecino and check_password_hash(vecino.password, data['old_password']):
@@ -119,3 +120,4 @@ class Usuario_service:
             db.session.commit()
             return vecino.to_dict()
         raise ValueError("El documento o la contraseña actual no corresponden a un usuario en el sistema")
+    
