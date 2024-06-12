@@ -3,6 +3,7 @@ from app import db
 from app.models.models import Servicio, Foto
 from werkzeug.utils import secure_filename
 import os
+from datetime import datetime
 
 # funcion para saber si el archivo es permitido
 def allowed_file(filename):
@@ -13,8 +14,9 @@ def allowed_file(filename):
 class ServicioService:
     @staticmethod
     def get_all_servicios():
-        servicios = db.session.execute(db.select(Servicio).order_by(Servicio.idServicio)).scalars()
-        return jsonify([servicio.to_dict() for servicio in servicios])
+        print("llego al servicio")
+        servicios = db.session.execute(db.select(Servicio).order_by(Servicio.id)).scalars()
+        return servicios
     
     @staticmethod
     def get_servicios_by_user(id):
@@ -28,11 +30,9 @@ class ServicioService:
 
         # ejemplo de como se ve el data
         # {
-        #   "idVecino": "123",
-        #   "idReclamo": "456",
-        #   "fecha": "2024-06-10",
-        #   "hora": "14:30",
-        #   "idEstado": "1",
+        #   "documento": "123",
+        #   "titulo": "Titulo del servicio",
+        #   "descripcion": "Descripcion del servicio",
         #   "files": [
         #     {
         #       "name": "photo1.jpg",
@@ -52,10 +52,17 @@ class ServicioService:
             idVecino=data['idVecino'],
             titulo=data['titulo'],
             descripcion=data['descripcion'],
-            fecha=data['fecha'],
-            hora=data['hora'],
-            idEstado=data['idEstado']
+            idEstado=1
         )
+
+        # Generate current date and time
+        current_date = datetime.now().date()
+        current_time = datetime.now().time()
+
+        # Set the date and time for the new servicio
+        new_servicio.fecha = current_date
+        new_servicio.hora = current_time
+
         db.session.add(new_servicio)
         db.session.commit()
 

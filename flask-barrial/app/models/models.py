@@ -40,7 +40,7 @@ class Servicio(db.Model):
     def to_dict(self):
         return {
             'id': self.id,  # Added id field to the dictionary
-            'idVecino': self.idVecino,
+            'documento': self.idVecino,
             'titulo': self.titulo,
             'descripcion': self.descripcion,
             'fecha': self.fecha,

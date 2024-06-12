@@ -8,6 +8,7 @@ class ServicioController:
             return ServicioService.get_all_servicios(), 200
         except Exception as e:
             return str(e), 500
+        
     @staticmethod
     def get_servicios_by_user(idUser):
         try:

@@ -9,8 +9,22 @@ def hello():
 
 @servicios_bp.route('/all', methods=['GET'])
 def get_all_servicios():
+    serviciosArray = []
     servicios = ServicioController.get_all_servicios()
-    return servicios
+    print(servicios)
+    if servicios:
+        for servicio in servicios:
+            serviciosArray.append({
+            'id': servicio.id,  # Added id field to the dictionarqy
+            'idVecino': servicio.idVecino,
+            'titulo': servicio.titulo,
+            'descripcion': servicio.descripcion,
+            'fecha': servicio.fecha,
+            'hora': servicio.hora,
+            'idEstado': servicio.idEstado
+        })
+
+    return jsonify(serviciosArray)
 
 @servicios_bp.route('/<string:idUser>', methods=['GET'])
 def get_servicios_by_user(idUser):
