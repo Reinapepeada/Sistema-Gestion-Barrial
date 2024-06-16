@@ -1,6 +1,10 @@
 from flask import Blueprint, jsonify, request
 from app.controllers.servicio_controller import ServicioController
 
+from app.models.models import Servicio, Foto
+
+from app import db
+
 servicios_bp = Blueprint('servicios', __name__)
 
 @servicios_bp.route('/', methods=['GET'])
@@ -9,22 +13,9 @@ def hello():
 
 @servicios_bp.route('/all', methods=['GET'])
 def get_all_servicios():
-    serviciosArray = []
     servicios = ServicioController.get_all_servicios()
     print(servicios)
-    if servicios:
-        for servicio in servicios:
-            serviciosArray.append({
-            'id': servicio.id,  # Added id field to the dictionarqy
-            'idVecino': servicio.idVecino,
-            'titulo': servicio.titulo,
-            'descripcion': servicio.descripcion,
-            'fecha': servicio.fecha,
-            'hora': servicio.hora,
-            'idEstado': servicio.idEstado
-        })
-
-    return jsonify(serviciosArray)
+    return servicios
 
 @servicios_bp.route('/<string:idUser>', methods=['GET'])
 def get_servicios_by_user(idUser):
@@ -33,6 +24,8 @@ def get_servicios_by_user(idUser):
 
 @servicios_bp.route('/create', methods=['POST'])
 def create_servicio():
-    data = request.form.to_dict()
+    data = request.form
+    print(data)
     servicios = ServicioController.create_servicio(data)
+    print(servicios)
     return servicios

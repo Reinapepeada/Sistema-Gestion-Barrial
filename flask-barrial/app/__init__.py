@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -14,6 +14,10 @@ def create_app():
     # Inicializar db
     db.init_app(app)
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+    @app.route('/uploads/<filename>')
+    def uploaded_file(filename):
+        return send_from_directory('uploads', filename)
 
 
     # Registrar Blueprints
