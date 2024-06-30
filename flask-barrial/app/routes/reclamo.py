@@ -24,7 +24,6 @@ def create_reclamo():
 
 @reclamos_bp.route('/por-usuario/<string:documento>', methods=['get'])
 def get_reclamos_by_usuario(documento):
-    print(documento)
     return ReclamoController.get_reclamos_by_usuario(documento)
 
 @reclamos_bp.route('/<int:id>', methods=['PUT'])

@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from app import db
-from app.models.models import Reclamo, Sitio, Desperfecto, FotosReclamos
+from app.models.models import Reclamo, Sitio, Desperfecto, FotosReclamos, Personal,Vecino
 from werkzeug.utils import secure_filename
 import os
 import uuid
@@ -19,6 +19,13 @@ class ReclamoService:
         reclamosSelect = db.session.execute(db.select(Reclamo).order_by(Reclamo.idReclamo)).scalars()
         if reclamosSelect:
             for reclamo in reclamosSelect:
+                sitio=db.session.execute(db.select(Sitio).filter_by(idSitio=reclamo.idSitio)).scalar()
+                desperfecto=db.session.execute(db.select(Desperfecto).filter_by(idDesperfecto=reclamo.idDesperfecto)).scalar()
+                # intenta traer al usuario de vecinos
+                usuario = db.session.execute(db.select(Vecino).filter_by(documento=reclamo.documento)).scalar()
+                if usuario is None:
+                    # si no lo encuentra, intenta traer al usuario de personal
+                    usuario = db.session.execute(db.select(Personal).filter_by(legajo=reclamo.legajo)).scalar()
                 fotos = db.session.execute(db.select(FotosReclamos).filter_by(reclamoid=reclamo.idReclamo)).scalars().all()
                 fotosArray = []
                 for foto in fotos:
@@ -26,8 +33,11 @@ class ReclamoService:
                 reclamos.append({
                     'idReclamo': reclamo.idReclamo,
                     'documento': reclamo.documento,
+                    'usuario': usuario.to_dict() if usuario else None,
                     'idSitio': reclamo.idSitio,
+                    'sitio': sitio.descripcion,
                     'idDesperfecto': reclamo.idDesperfecto,
+                    'desperfecto': desperfecto.descripcion,
                     'descripcion': reclamo.descripcion,
                     'estado': reclamo.estado,
                     'idReclamoUnificado': reclamo.idReclamoUnificado,
@@ -122,12 +132,17 @@ class ReclamoService:
     
     @staticmethod
     def get_reclamos_by_user(documento):
-        # compruebo si es vecino :
-        print(documento)
         reclamos=[]
         reclamosSelect = db.session.execute(db.select(Reclamo).filter_by(documento=documento)).scalars()
         if reclamosSelect:
             for reclamo in reclamosSelect:
+                sitio=db.session.execute(db.select(Sitio).filter_by(idSitio=reclamo.idSitio)).scalar()
+                desperfecto=db.session.execute(db.select(Desperfecto).filter_by(idDesperfecto=reclamo.idDesperfecto)).scalar()
+                # intenta traer al usuario de vecinos
+                usuario = db.session.execute(db.select(Vecino).filter_by(documento=reclamo.documento)).scalar()
+                if usuario is None:
+                    # si no lo encuentra, intenta traer al usuario de personal
+                    usuario = db.session.execute(db.select(Personal).filter_by(legajo=reclamo.legajo)).scalar()
                 fotos = db.session.execute(db.select(FotosReclamos).filter_by(reclamoid=reclamo.idReclamo)).scalars().all()
                 fotosArray = []
                 for foto in fotos:
@@ -135,20 +150,18 @@ class ReclamoService:
                 reclamos.append({
                     'idReclamo': reclamo.idReclamo,
                     'documento': reclamo.documento,
+                    'usuario': usuario.to_dict() if usuario else None,
                     'idSitio': reclamo.idSitio,
+                    'sitio': sitio.descripcion,
                     'idDesperfecto': reclamo.idDesperfecto,
+                    'desperfecto': desperfecto.descripcion,
                     'descripcion': reclamo.descripcion,
                     'estado': reclamo.estado,
                     'idReclamoUnificado': reclamo.idReclamoUnificado,
                     'fotos': fotosArray
                 })
-                
         return jsonify(reclamos)
     
-    @staticmethod
-    def get_reclamos_by_sitio(id):
-        reclamos = db.session.execute(db.select(Reclamo).filter_by(idSitio=id)).scalars()
-        return reclamos
     
     @staticmethod
     def get_all_sitios():
