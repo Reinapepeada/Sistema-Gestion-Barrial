@@ -22,6 +22,10 @@ def create_reclamo():
     print(servicios)
     return servicios
 
+@reclamos_bp.route('/por-usuario/<string:documento>', methods=['get'])
+def get_reclamos_by_usuario(documento):
+    return ReclamoController.get_reclamos_by_usuario(documento)
+
 @reclamos_bp.route('/<int:id>', methods=['PUT'])
 def update_reclamo(id):
     data = request.get_json()

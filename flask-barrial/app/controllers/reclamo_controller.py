@@ -16,11 +16,14 @@ class ReclamoController:
     
     @staticmethod
     def create_reclamo(data):
-        new_reclamo = ReclamoService.create_reclamo()
+        new_reclamo = ReclamoService.create_reclamo(data)
         if new_reclamo:
-            return new_reclamo
+            return jsonify({
+                'success': True,
+                'reclamo_id': new_reclamo.id
+            }), 201
         
-        return "no se ha podido crear el reclamo", 400
+        return jsonify({"message": "No se ha podido crear el reclamo"}), 400
     
     @staticmethod
     def update_reclamo(id, data):

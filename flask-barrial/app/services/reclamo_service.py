@@ -5,12 +5,10 @@ from werkzeug.utils import secure_filename
 import os
 import uuid
 
-# funcion para saber si el archivo es permitido
+# función para saber si el archivo es permitido
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
 
 class ReclamoService:
     @staticmethod
@@ -39,7 +37,6 @@ class ReclamoService:
     def get_reclamo_by_id(id):
         reclamo = db.session.execute(db.select(Reclamo).filter_by(idReclamo=id)).scalar()
         return reclamo
-    
 
     @staticmethod
     def create_reclamo():
@@ -52,15 +49,15 @@ class ReclamoService:
 
             idReclamoUnificado = data.get('idReclamoUnificado', 0)
 
-            # Validate idSitio
+            # Validar idSitio
             sitio_exists = db.session.query(Sitio).filter_by(idSitio=data['sitio']).first()
             if not sitio_exists:
                 print(f"Error: Sitio {data['sitio']} does not exist")
                 return jsonify({"error": "The specified sitio does not exist."}), 400
 
-            #  convertir a integer
+            # Convertir a integer
             sitio = int(data['sitio'])
-            #  convertir a integer
+            # Convertir a integer
             desper = int(data['desperfecto'])
 
             new_reclamo = Reclamo(
@@ -74,7 +71,7 @@ class ReclamoService:
             db.session.commit()
             print("New reclamo:", new_reclamo)
 
-            # Save photos and associate them with the servicio
+            # Guardar fotos y asociarlas con el servicio
             for file in files:
                 print("File:", file)
                 if allowed_file(file.filename):
@@ -90,14 +87,16 @@ class ReclamoService:
                     return jsonify({"error": f"File {file.filename} is not allowed"}), 400
 
             db.session.commit()
-            return jsonify(new_reclamo.to_dict()), 201
+            return jsonify({
+                'success': True,
+                'reclamo_id': new_reclamo.idReclamo
+            }), 201
 
         except Exception as e:
             db.session.rollback()
             print("Error in create_reclamo:", e)
             return jsonify({"error": str(e)}), 500
-            
-    
+
     @staticmethod
     def update_reclamo(id, data):
         updated_reclamo = db.session.execute(db.select(Reclamo).filter_by(idReclamo=id)).scalar()
@@ -143,5 +142,3 @@ class ReclamoService:
         if desperfectos:
             return desperfectos
         raise Exception("No se han encontrado desperfectos")
-    # 
-        
