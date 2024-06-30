@@ -4,13 +4,11 @@ class Desperfecto(db.Model):
     __tablename__ = 'desperfectos'
     idDesperfecto = db.Column(db.Integer, primary_key=True)
     descripcion = db.Column(db.String, nullable=False)
-    idRubro = db.Column(db.Integer, db.ForeignKey('rubros.idRubro'), nullable=False)
     
     def to_dict(self):
         return {
             'idDesperfecto': self.idDesperfecto,
             'descripcion': self.descripcion,
-            'idRubro': self.idRubro
         }
     
 
@@ -50,17 +48,6 @@ class Servicio(db.Model):
             'idEstado': self.idEstado
         }
 
-class Rubro(db.Model):
-    __tablename__ = 'rubros'
-    idRubro = db.Column(db.Integer, primary_key=True)
-    descripcion = db.Column(db.String, nullable=False)
-    desperfectos = db.relationship('Desperfecto', backref='rubro', lazy=True)
-    
-    def to_dict(self):
-        return {
-            'idRubro': self.idRubro,
-            'descripcion': self.descripcion
-        }
 
 class Barrio(db.Model):
     __tablename__ = 'barrios'
@@ -154,9 +141,10 @@ class Reclamo(db.Model):
     idSitio = db.Column(db.Integer, db.ForeignKey('sitios.idSitio'), nullable=False)
     idDesperfecto = db.Column(db.Integer, db.ForeignKey('desperfectos.idDesperfecto'), nullable=False)
     descripcion = db.Column(db.String, nullable=False)
-    estado = db.Column(db.String, nullable=False)
-    idReclamoUnificado = db.Column(db.Integer, nullable=True)
-    legajo = db.Column(db.Integer, db.ForeignKey('personal.legajo'), nullable=False)
+    # estado por defecto es 'pendiente'
+    estado = db.Column(db.String, nullable=False, default='pendiente')
+    #  ide de reclamo unificado por defecto es 0 y cuando se quiere unificar se le asigna el id del reclamo al cual se unifica
+    idReclamoUnificado = db.Column(db.Integer, nullable=False, default=0)
     movimientos = db.relationship('MovimientoReclamo', backref='reclamo', lazy=True)
     
     def to_dict(self):
@@ -168,7 +156,6 @@ class Reclamo(db.Model):
             'descripcion': self.descripcion,
             'estado': self.estado,
             'idReclamoUnificado': self.idReclamoUnificado,
-            'legajo': self.legajo
         }
 
 class MovimientoReclamo(db.Model):
@@ -187,7 +174,22 @@ class MovimientoReclamo(db.Model):
             'causa': self.causa,
             'fecha': self.fecha
         }
+    
 
+class FotosReclamos(db.Model):
+    __tablename__ = 'fotosReclamos'
+
+    id = db.Column(db.Integer, primary_key=True)
+    reclamoid = db.Column(db.Integer, db.ForeignKey('reclamos.idReclamo'), nullable=False)
+    ruta = db.Column(db.String(255), nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'reclamoid': self.reclamoid,
+            'ruta': self.ruta
+        }
+    
 class Personal(db.Model):
     __tablename__ = 'personal'
     legajo = db.Column(db.Integer, primary_key=True)
@@ -198,7 +200,6 @@ class Personal(db.Model):
     sector = db.Column(db.String, nullable=False)
     categoria = db.Column(db.String, nullable=False)
     fechaIngreso = db.Column(db.Date, nullable=False)
-    reclamos = db.relationship('Reclamo', backref='personal', lazy=True)
     
     def to_dict(self):
         return {

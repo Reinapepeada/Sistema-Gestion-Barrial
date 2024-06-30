@@ -3,8 +3,8 @@ from app import db
 from app.models.models import Servicio, Foto
 from werkzeug.utils import secure_filename
 import os
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 # funcion para saber si el archivo es permitido
 def allowed_file(filename):
@@ -119,39 +119,20 @@ class ServicioService:
         
     
     @staticmethod
-    def update_servicio(id, data):
-        servicio = db.session.execute(db.select(Servicio).filter_by(idServicio=id)).scalar()
-        if not servicio:
-            return jsonify({"error": "Servicio not found"}), 404
-        
-        servicio.descripcion = data['descripcion']
-        servicio.fecha = data['fecha']
-        servicio.hora = data['hora']
-        # update fotos
-        files = data.getlist('files')
-        for file in files:
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path)
-                foto = Foto(servicio_id=servicio.id, ruta=file_path)
-                db.session.add(foto)
-            else:
-                db.session.rollback()
-                return jsonify({"error": f"File {file.filename} is not allowed"}), 400
-        
-        # busca y eliminar las fotos que no estan en la lista de files y en la carpeta
-        fotos = db.session.execute(db.select(Foto).filter_by(servicio_id=id)).scalars()
-        for foto in fotos:
-            try:
-                if foto.ruta not in [file.filename for file in files]:
-                    os.remove(foto.ruta)
+    def delete_servicio(id):
+        try:
+            servicio = db.session.execute(db.select(Servicio).filter_by(id=id)).scalar_one()
+            # elimino las fotos asociadas al servicio
+            fotos = db.session.execute(db.select(Foto).filter_by(servicio_id=id)).scalars().all()
+            # si hay fotos las elimino
+            if fotos:
+                for foto in fotos:
                     db.session.delete(foto)
-            except Exception as e:
-                db.session.rollback()
-                return jsonify({"error": f"Failed to delete photo: {str(e)}"}), 500
-        
-        # envio todos los datos en a la base de datos  
-        db.session.commit()
-
-        return jsonify(servicio.to_dict())
+            # elimino el servicio
+            db.session.delete(servicio)
+            db.session.commit()
+            return jsonify({"message": "Servicio deleted successfully"})
+        except Exception as e:
+            db.session.rollback()
+            print("Error in delete_servicio:", e)
+            return jsonify({"error": str(e)})

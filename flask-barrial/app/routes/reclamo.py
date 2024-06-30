@@ -5,8 +5,7 @@ reclamos_bp = Blueprint('reclamos', __name__)
 
 @reclamos_bp.route('/', methods=['GET'])
 def get_reclamos():
-    reclamos = ReclamoController.get_all_reclamos()
-    return jsonify([reclamo.to_dict() for reclamo in reclamos]), 200
+    return ReclamoController.get_all_reclamos()
 
 @reclamos_bp.route('/<int:id>', methods=['GET'])
 def get_reclamo(id):
@@ -15,13 +14,13 @@ def get_reclamo(id):
         return jsonify(reclamo.to_dict()), 200
     return jsonify({'message': 'Reclamo not found'}), 404
 
-@reclamos_bp.route('/', methods=['POST'])
+@reclamos_bp.route('/create', methods=['POST'])
 def create_reclamo():
-    data = request.get_json()
-    new_reclamo, status = ReclamoController.create_reclamo(data)
-    if status == 201:
-        return jsonify(new_reclamo.to_dict()), 201
-    return jsonify({'message': 'No se ha podido crear el reclamo'}), 400
+    data = request.form
+    print(data)
+    servicios = ReclamoController.create_reclamo(data)
+    print(servicios)
+    return servicios
 
 @reclamos_bp.route('/<int:id>', methods=['PUT'])
 def update_reclamo(id):
@@ -31,9 +30,11 @@ def update_reclamo(id):
         return jsonify(updated_reclamo.to_dict()), 200
     return jsonify({'message': 'Reclamo not found'}), 404
 
-@reclamos_bp.route('/<int:id>', methods=['DELETE'])
-def delete_reclamo(id):
-    deleted_reclamo, status = ReclamoController.delete_reclamo(id)
-    if status == 200:
-        return jsonify({'message': 'Reclamo deleted successfully'}), 200
-    return jsonify({'message': 'Reclamo not found'}), 404
+
+@reclamos_bp.route('/sitios', methods=['GET'])
+def get_sitios():
+    return ReclamoController.get_all_sitios()
+
+@reclamos_bp.route('/desperfectos', methods=['GET'])
+def get_desperfectos():
+    return ReclamoController.get_all_desperfectos()

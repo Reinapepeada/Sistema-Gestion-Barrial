@@ -29,3 +29,9 @@ def create_servicio():
     servicios = ServicioController.create_servicio(data)
     print(servicios)
     return servicios
+
+# eliminar servicio
+@servicios_bp.route('/delete/<string:idServicio>', methods=['DELETE'])
+def delete_servicio(idServicio):
+    servicio = ServicioController.delete_servicio(idServicio)
+    return servicio

@@ -35,3 +35,10 @@ class ServicioController:
         
         except Exception as e:
             return str(e), 500
+        
+    @staticmethod
+    def delete_servicio(idServicio):
+        try:
+            return ServicioService.delete_servicio(idServicio), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500

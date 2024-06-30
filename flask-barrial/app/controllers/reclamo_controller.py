@@ -1,3 +1,4 @@
+from flask import jsonify
 from app.services.reclamo_service import ReclamoService
 
 class ReclamoController:
@@ -15,9 +16,9 @@ class ReclamoController:
     
     @staticmethod
     def create_reclamo(data):
-        new_reclamo = ReclamoService.create_reclamo(data)
+        new_reclamo = ReclamoService.create_reclamo()
         if new_reclamo:
-            return new_reclamo, 201
+            return new_reclamo
         
         return "no se ha podido crear el reclamo", 400
     
@@ -52,3 +53,30 @@ class ReclamoController:
             return reclamos, 200
         
         return "no se han encontrado reclamos para el sitio", 404
+    
+    @staticmethod
+    def get_all_sitios():
+        try:
+            sitiosAll = ReclamoService.get_all_sitios()
+            sitios = []
+            for sitio in sitiosAll:
+                sitios.append({
+                    "idSitio": sitio.idSitio,
+                    "descripcion": sitio.descripcion,
+                })
+            
+            return sitios, 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+        
+    @staticmethod
+    def get_all_desperfectos():
+        try:
+            desperfectosAll = ReclamoService.get_all_desperfectos()
+            desperfectos = []
+            for desperfecto in desperfectosAll:
+                desperfectos.append(desperfecto.to_dict())
+            
+            return desperfectos, 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
