@@ -121,9 +121,29 @@ class ReclamoService:
         return deleted_reclamo
     
     @staticmethod
-    def get_reclamos_by_vecino(documento):
-        reclamos = db.session.execute(db.select(Reclamo).filter_by(documento=documento)).scalars()
-        return reclamos
+    def get_reclamos_by_user(documento):
+        # compruebo si es vecino :
+        print(documento)
+        reclamos=[]
+        reclamosSelect = db.session.execute(db.select(Reclamo).filter_by(documento=documento)).scalars()
+        if reclamosSelect:
+            for reclamo in reclamosSelect:
+                fotos = db.session.execute(db.select(FotosReclamos).filter_by(reclamoid=reclamo.idReclamo)).scalars().all()
+                fotosArray = []
+                for foto in fotos:
+                    fotosArray.append(foto.ruta)
+                reclamos.append({
+                    'idReclamo': reclamo.idReclamo,
+                    'documento': reclamo.documento,
+                    'idSitio': reclamo.idSitio,
+                    'idDesperfecto': reclamo.idDesperfecto,
+                    'descripcion': reclamo.descripcion,
+                    'estado': reclamo.estado,
+                    'idReclamoUnificado': reclamo.idReclamoUnificado,
+                    'fotos': fotosArray
+                })
+                
+        return jsonify(reclamos)
     
     @staticmethod
     def get_reclamos_by_sitio(id):
