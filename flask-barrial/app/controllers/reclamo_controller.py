@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, request
 from app.services.reclamo_service import ReclamoService
 
 class ReclamoController:
@@ -12,15 +12,18 @@ class ReclamoController:
         if reclamo_found:
             return reclamo_found, 200
         
-        return "no se ha encontrado un reclamo que corresponda", 404
+        return "No se ha encontrado un reclamo que corresponda", 404
     
     @staticmethod
     def create_reclamo(data):
-        new_reclamo = ReclamoService.create_reclamo()
-        if new_reclamo:
-            return new_reclamo
-        
-        return "no se ha podido crear el reclamo", 400
+        try:
+            new_reclamo = ReclamoService.create_reclamo(data)
+            if new_reclamo:
+                return jsonify({"reclamo_id": new_reclamo.id}), 201
+            
+            return "No se ha podido crear el reclamo", 400
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
     
     @staticmethod
     def update_reclamo(id, data):
@@ -28,7 +31,7 @@ class ReclamoController:
         if updated_reclamo:
             return updated_reclamo, 200
         
-        return "no se ha podido actualizar el reclamo", 404
+        return "No se ha podido actualizar el reclamo", 404
     
     @staticmethod
     def delete_reclamo(id):
@@ -36,23 +39,23 @@ class ReclamoController:
         if deleted_reclamo:
             return deleted_reclamo, 200
         
-        return "no se ha podido eliminar el reclamo", 404
+        return "No se ha podido eliminar el reclamo", 404
     
     @staticmethod
-    def get_reclamos_by_usuario(documento):
-        reclamos = ReclamoService.get_reclamos_by_user(documento)
+    def get_reclamos_by_vecino(documento):
+        reclamos = ReclamoService.get_reclamos_by_vecino(documento)
         if reclamos:
             return reclamos, 200
-        else:
-            return "no se han encontrado reclamos para el usuario", 404
         
+        return "No se han encontrado reclamos para el vecino", 404
+    
     @staticmethod
     def get_reclamos_by_sitio(id):
         reclamos = ReclamoService.get_reclamos_by_sitio(id)
         if reclamos:
             return reclamos, 200
         
-        return "no se han encontrado reclamos para el sitio", 404
+        return "No se han encontrado reclamos para el sitio", 404
     
     @staticmethod
     def get_all_sitios():

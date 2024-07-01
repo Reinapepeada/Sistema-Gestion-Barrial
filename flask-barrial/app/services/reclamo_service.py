@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from app import db
-from app.models.models import Reclamo, Sitio, Desperfecto, FotosReclamos, Personal,Vecino
+from app.models.models import Reclamo, Sitio, Desperfecto, FotosReclamos
 from werkzeug.utils import secure_filename
 import os
 import uuid
@@ -10,8 +10,6 @@ def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
-
 class ReclamoService:
     @staticmethod
     def get_all_reclamos():
@@ -19,13 +17,6 @@ class ReclamoService:
         reclamosSelect = db.session.execute(db.select(Reclamo).order_by(Reclamo.idReclamo)).scalars()
         if reclamosSelect:
             for reclamo in reclamosSelect:
-                sitio=db.session.execute(db.select(Sitio).filter_by(idSitio=reclamo.idSitio)).scalar()
-                desperfecto=db.session.execute(db.select(Desperfecto).filter_by(idDesperfecto=reclamo.idDesperfecto)).scalar()
-                # intenta traer al usuario de vecinos
-                usuario = db.session.execute(db.select(Vecino).filter_by(documento=reclamo.documento)).scalar()
-                if usuario is None:
-                    # si no lo encuentra, intenta traer al usuario de personal
-                    usuario = db.session.execute(db.select(Personal).filter_by(legajo=reclamo.legajo)).scalar()
                 fotos = db.session.execute(db.select(FotosReclamos).filter_by(reclamoid=reclamo.idReclamo)).scalars().all()
                 fotosArray = []
                 for foto in fotos:
@@ -33,11 +24,8 @@ class ReclamoService:
                 reclamos.append({
                     'idReclamo': reclamo.idReclamo,
                     'documento': reclamo.documento,
-                    'usuario': usuario.to_dict() if usuario else None,
                     'idSitio': reclamo.idSitio,
-                    'sitio': sitio.descripcion,
                     'idDesperfecto': reclamo.idDesperfecto,
-                    'desperfecto': desperfecto.descripcion,
                     'descripcion': reclamo.descripcion,
                     'estado': reclamo.estado,
                     'idReclamoUnificado': reclamo.idReclamoUnificado,
@@ -49,7 +37,6 @@ class ReclamoService:
     def get_reclamo_by_id(id):
         reclamo = db.session.execute(db.select(Reclamo).filter_by(idReclamo=id)).scalar()
         return reclamo
-    
 
     @staticmethod
     def create_reclamo():
@@ -100,13 +87,12 @@ class ReclamoService:
                     return jsonify({"error": f"File {file.filename} is not allowed"}), 400
 
             db.session.commit()
-            return jsonify(new_reclamo.to_dict()), 201
+            return jsonify({"reclamo_id": new_reclamo.idReclamo}), 201
 
         except Exception as e:
             db.session.rollback()
             print("Error in create_reclamo:", e)
             return jsonify({"error": str(e)}), 500
-            
     
     @staticmethod
     def update_reclamo(id, data):
@@ -131,37 +117,14 @@ class ReclamoService:
         return deleted_reclamo
     
     @staticmethod
-    def get_reclamos_by_user(documento):
-        reclamos=[]
-        reclamosSelect = db.session.execute(db.select(Reclamo).filter_by(documento=documento)).scalars()
-        if reclamosSelect:
-            for reclamo in reclamosSelect:
-                sitio=db.session.execute(db.select(Sitio).filter_by(idSitio=reclamo.idSitio)).scalar()
-                desperfecto=db.session.execute(db.select(Desperfecto).filter_by(idDesperfecto=reclamo.idDesperfecto)).scalar()
-                # intenta traer al usuario de vecinos
-                usuario = db.session.execute(db.select(Vecino).filter_by(documento=reclamo.documento)).scalar()
-                if usuario is None:
-                    # si no lo encuentra, intenta traer al usuario de personal
-                    usuario = db.session.execute(db.select(Personal).filter_by(legajo=reclamo.legajo)).scalar()
-                fotos = db.session.execute(db.select(FotosReclamos).filter_by(reclamoid=reclamo.idReclamo)).scalars().all()
-                fotosArray = []
-                for foto in fotos:
-                    fotosArray.append(foto.ruta)
-                reclamos.append({
-                    'idReclamo': reclamo.idReclamo,
-                    'documento': reclamo.documento,
-                    'usuario': usuario.to_dict() if usuario else None,
-                    'idSitio': reclamo.idSitio,
-                    'sitio': sitio.descripcion,
-                    'idDesperfecto': reclamo.idDesperfecto,
-                    'desperfecto': desperfecto.descripcion,
-                    'descripcion': reclamo.descripcion,
-                    'estado': reclamo.estado,
-                    'idReclamoUnificado': reclamo.idReclamoUnificado,
-                    'fotos': fotosArray
-                })
-        return jsonify(reclamos)
+    def get_reclamos_by_vecino(documento):
+        reclamos = db.session.execute(db.select(Reclamo).filter_by(documento=documento)).scalars()
+        return reclamos
     
+    @staticmethod
+    def get_reclamos_by_sitio(id):
+        reclamos = db.session.execute(db.select(Reclamo).filter_by(idSitio=id)).scalars()
+        return reclamos
     
     @staticmethod
     def get_all_sitios():
@@ -176,5 +139,3 @@ class ReclamoService:
         if desperfectos:
             return desperfectos
         raise Exception("No se han encontrado desperfectos")
-    # 
-        
