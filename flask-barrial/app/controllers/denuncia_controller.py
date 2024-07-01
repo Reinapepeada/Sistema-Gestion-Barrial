@@ -15,8 +15,8 @@ class DenunciaController:
         return "no se ha encontrado una denuncia que corresponda", 404
     
     @staticmethod
-    def create_denuncia(data):
-        new_denuncia = DenunciaService.create_denuncia(data)
+    def create_denuncia():
+        new_denuncia = DenunciaService.create_denuncia()
         if new_denuncia:
             return new_denuncia, 201
         

@@ -15,11 +15,10 @@ def get_denuncia(id):
         return jsonify(denuncia.to_dict()), 200
     return jsonify({'message': 'Denuncia not found'}), 404
 
-@denuncias_bp.route('/denuncias', methods=['POST'])
+@denuncias_bp.route('/create', methods=['POST'])
 def create_denuncia():
-    data = request.get_json()
-    new_denuncia = DenunciaController.create_denuncia(data)
-    return jsonify(new_denuncia.to_dict()), 201
+    new_denuncia = DenunciaController.create_denuncia()
+    return new_denuncia
 
 @denuncias_bp.route('/denuncias/<int:id>', methods=['PUT'])
 def update_denuncia(id):
