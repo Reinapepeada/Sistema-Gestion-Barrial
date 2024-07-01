@@ -87,12 +87,13 @@ class ReclamoService:
                     return jsonify({"error": f"File {file.filename} is not allowed"}), 400
 
             db.session.commit()
-            return jsonify({"reclamo_id": new_reclamo.idReclamo}), 201
+            return jsonify(new_reclamo.to_dict()), 201
 
         except Exception as e:
             db.session.rollback()
             print("Error in create_reclamo:", e)
             return jsonify({"error": str(e)}), 500
+            
     
     @staticmethod
     def update_reclamo(id, data):

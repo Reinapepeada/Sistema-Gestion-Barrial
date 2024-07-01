@@ -18,7 +18,7 @@ def get_reclamo(id):
 def create_reclamo():
     data = request.form
     print(data)
-    servicios = ReclamoController.create_reclamo(data)
+    servicios = ReclamoController.create_reclamo()
     print(servicios)
     return servicios
 

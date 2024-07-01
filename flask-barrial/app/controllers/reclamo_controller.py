@@ -15,16 +15,10 @@ class ReclamoController:
         return "No se ha encontrado un reclamo que corresponda", 404
     
     @staticmethod
-    def create_reclamo(data):
-        try:
-            new_reclamo = ReclamoService.create_reclamo(data)
-            if new_reclamo:
-                return jsonify({"reclamo_id": new_reclamo.id}), 201
+    def create_reclamo():
+        
+        return ReclamoService.create_reclamo()
             
-            return "No se ha podido crear el reclamo", 400
-        except Exception as e:
-            return jsonify({"error": str(e)}), 500
-    
     @staticmethod
     def update_reclamo(id, data):
         updated_reclamo = ReclamoService.update_reclamo(id, data)
