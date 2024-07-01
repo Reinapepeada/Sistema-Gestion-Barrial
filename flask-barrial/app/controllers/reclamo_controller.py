@@ -42,12 +42,12 @@ class ReclamoController:
         return "No se ha podido eliminar el reclamo", 404
     
     @staticmethod
-    def get_reclamos_by_vecino(documento):
-        reclamos = ReclamoService.get_reclamos_by_vecino(documento)
+    def get_reclamos_by_usuario(documento):
+        reclamos = ReclamoService.get_reclamos_by_user(documento)
         if reclamos:
             return reclamos, 200
         
-        return "No se han encontrado reclamos para el vecino", 404
+        return "No se han encontrado reclamos para el usuario", 404
     
     @staticmethod
     def get_reclamos_by_sitio(id):
