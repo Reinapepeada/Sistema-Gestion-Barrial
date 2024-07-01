@@ -18,14 +18,16 @@ class ReclamoService:
         if reclamosSelect:
             for reclamo in reclamosSelect:
                 fotos = db.session.execute(db.select(FotosReclamos).filter_by(reclamoid=reclamo.idReclamo)).scalars().all()
+                sitio = db.session.execute(db.select(Sitio).filter_by(idSitio=reclamo.idSitio)).scalar()
+                desperfecto = db.session.execute(db.select(Desperfecto).filter_by(idDesperfecto=reclamo.idDesperfecto)).scalar()
                 fotosArray = []
                 for foto in fotos:
                     fotosArray.append(foto.ruta)
                 reclamos.append({
                     'idReclamo': reclamo.idReclamo,
                     'documento': reclamo.documento,
-                    'idSitio': reclamo.idSitio,
-                    'idDesperfecto': reclamo.idDesperfecto,
+                    'sitio': sitio.descripcion if sitio else 'N/A',
+                    'desperfecto': desperfecto.descripcion if desperfecto else 'N/A',
                     'descripcion': reclamo.descripcion,
                     'estado': reclamo.estado,
                     'idReclamoUnificado': reclamo.idReclamoUnificado,

@@ -22,7 +22,7 @@ def create_reclamo():
     print(servicios)
     return servicios
 
-@reclamos_bp.route('/por-usuario/<string:documento>', methods=['get'])
+@reclamos_bp.route('/por-usuario/<string:documento>', methods=['GET'])
 def get_reclamos_by_usuario(documento):
     return ReclamoController.get_reclamos_by_usuario(documento)
 
