@@ -67,6 +67,7 @@ class DenunciaService:
                     tipoDenuncia=data["denunciaType"],
                     descripcion=data["descripcion"],
                     estado="pendiente",
+                    denunciadoDocumento=data["denunciadoDocumento"],
                     aceptaResponsabilidad=False,
                     ubicacion=data["ubicacion"],
                 )

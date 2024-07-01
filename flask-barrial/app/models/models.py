@@ -68,7 +68,7 @@ class Vecino(db.Model):
     apellido = db.Column(db.String, nullable=False)
     direccion = db.Column(db.String, nullable=False)
     codigoBarrio = db.Column(db.Integer, db.ForeignKey('barrios.idBarrio'), nullable=False)
-    denuncias = db.relationship('Denuncia', backref='vecino', lazy=True)
+    
     reclamos = db.relationship('Reclamo', backref='vecino', lazy=True)
     password = db.Column(db.String, nullable=True)
     email = db.Column(db.String, nullable=True)
@@ -86,16 +86,20 @@ class Denuncia(db.Model):
     __tablename__ = 'denuncias'
     idDenuncias = db.Column(db.Integer, primary_key=True)
     documento = db.Column(db.String, db.ForeignKey('vecinos.documento'), nullable=False)
-    idSitio = db.Column(db.Integer, db.ForeignKey('sitios.idSitio'), nullable=False)
+    denunciadoDocumento = db.Column(db.String,db.ForeignKey('vecinos.documento'), nullable=True )
+    comercio = db.Column(db.String, nullable=True)
+    tipoDenuncia = db.Column(db.String, nullable=False)
     descripcion = db.Column(db.String, nullable=False)
     estado = db.Column(db.String, nullable=False)
     aceptaResponsabilidad = db.Column(db.Boolean, nullable=False)
-    
+    ubicacion=db.Column(db.String, nullable=False)
     def to_dict(self):
         return {
             'idDenuncias': self.idDenuncias,
             'documento': self.documento,
-            'idSitio': self.idSitio,
+            'denunciado': self.denunciadoDocumento,
+            'comercio': self.comercio,
+            'tipoDenuncia': self.tipoDenuncia,
             'descripcion': self.descripcion,
             'estado': self.estado,
             'aceptaResponsabilidad': self.aceptaResponsabilidad
@@ -115,7 +119,6 @@ class Sitio(db.Model):
     apertura = db.Column(db.Date, nullable=True)
     cierre = db.Column(db.Date, nullable=True)
     comentarios = db.Column(db.String, nullable=True)
-    denuncias = db.relationship('Denuncia', backref='sitio', lazy=True)
     reclamos = db.relationship('Reclamo', backref='sitio', lazy=True)
     
     def to_dict(self):
@@ -187,6 +190,19 @@ class FotosReclamos(db.Model):
         return {
             'id': self.id,
             'reclamoid': self.reclamoid,
+            'ruta': self.ruta
+        }
+    
+class FotosDenuncias(db.Model): 
+    __tablename__ = 'fotosDenuncias'
+    id = db.Column(db.Integer, primary_key=True)
+    denunciaId = db.Column(db.Integer, db.ForeignKey('denuncias.idDenuncias'), nullable=False)
+    ruta = db.Column(db.String(255), nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'denunciaid': self.denunciaId,
             'ruta': self.ruta
         }
     
