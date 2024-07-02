@@ -1,10 +1,10 @@
+# app/__init__.py
+
 import os
 from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 
-
-
-# creo la instancia de la base de datos
+# Crear la instancia de la base de datos
 db = SQLAlchemy()
 
 def create_app():
@@ -17,16 +17,15 @@ def create_app():
 
     @app.route('/uploads/<filename>')
     def uploaded_file(filename):
-        return send_from_directory('uploads', filename)
-
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
     # Registrar Blueprints
     from .routes import register_blueprints
     register_blueprints(app)
 
-    # crear ruta de bienvenida
+    # Crear ruta de bienvenida
     @app.route('/')
     def hello():
-        return {"message": "welcome to barrial api!  La mejor api para administrar tu Barrio!"}
+        return {"message": "¡Bienvenido a la API de Barrial! La mejor API para administrar tu barrio!"}
 
     return app
