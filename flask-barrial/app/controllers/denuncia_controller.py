@@ -1,4 +1,5 @@
 
+from flask import jsonify
 from app.services.denuncia_service import DenunciaService
 
 class DenunciaController:
@@ -40,12 +41,26 @@ class DenunciaController:
     
     @staticmethod
     def get_denuncias_by_vecino(documento):
-        denuncias = DenunciaService.get_denuncias_by_vecino(documento)
-        if denuncias:
-            return denuncias, 200
-        
-        return "no se han encontrado denuncias para el vecino", 404
+        print("Denuncias:", "llego aca")
+        try:
+            denuncias = DenunciaService.get_denuncias_by_vecino(documento)
+            if denuncias:
+                return jsonify([denuncia.to_dict() for denuncia in denuncias]), 200
+        except Exception as e:
+            print("Error:", e)
+            return jsonify({"error": "An error occurred while fetching the denuncias"}), 500
     
+    @staticmethod
+    def get_denuncias_by_denunciado(documento):
+        try:
+            denuncias = DenunciaService.get_denuncias_by_denunciado(documento)
+            if denuncias:
+                return jsonify([denuncia.to_dict() for denuncia in denuncias]), 200
+        except Exception as e:
+            print("Error:", e)
+            return jsonify({"error": "An error occurred while fetching the denuncias"}), 500
+        
+
     @staticmethod
     def get_denuncias_by_sitio(id):
         denuncias = DenunciaService.get_denuncias_by_sitio(id)

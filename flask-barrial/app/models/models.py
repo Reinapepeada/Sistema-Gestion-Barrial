@@ -97,12 +97,13 @@ class Denuncia(db.Model):
         return {
             'idDenuncias': self.idDenuncias,
             'documento': self.documento,
-            'denunciado': self.denunciadoDocumento,
+            'denunciadoDocumento': self.denunciadoDocumento,
             'comercio': self.comercio,
             'tipoDenuncia': self.tipoDenuncia,
             'descripcion': self.descripcion,
             'estado': self.estado,
-            'aceptaResponsabilidad': self.aceptaResponsabilidad
+            'aceptaResponsabilidad': self.aceptaResponsabilidad,
+            'ubicacion': self.ubicacion
         }
 
 class Sitio(db.Model):

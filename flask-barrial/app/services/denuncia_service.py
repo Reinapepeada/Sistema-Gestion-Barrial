@@ -28,8 +28,24 @@ def allowed_file(filename):
 class DenunciaService:
     @staticmethod
     def get_all_denuncias():
+
         denuncias = db.session.execute(
             db.select(Denuncia).order_by(Denuncia.idDenuncias)
+        ).scalars()
+        return denuncias
+
+    @staticmethod
+    def get_denuncias_by_vecino(documento):
+        print("Denuncias:", "llego aca")
+        denuncias = db.session.execute(
+            db.select(Denuncia).filter_by(documento=documento)
+        ).scalars()
+        return denuncias
+
+    @staticmethod
+    def get_denuncias_by_denunciado(documento):
+        denuncias = db.session.execute(
+            db.select(Denuncia).filter_by(denunciadoDocumento=documento)
         ).scalars()
         return denuncias
 
@@ -81,22 +97,25 @@ class DenunciaService:
                 if allowed_file(file.filename):
                     filename = secure_filename(file.filename)
                     unique_filename = f"{uuid.uuid4().hex}_{filename}"
-                    file_path = os.path.join(os.getcwd(), 'uploads', unique_filename)
+                    file_path = os.path.join(os.getcwd(), "uploads", unique_filename)
                     file.save(file_path)
                     ruta_relativa = f"uploads/{unique_filename}"
-                    foto = FotosDenuncias(denunciaId=denuncia.idDenuncias, ruta=ruta_relativa)
+                    foto = FotosDenuncias(
+                        denunciaId=denuncia.idDenuncias, ruta=ruta_relativa
+                    )
                     db.session.add(foto)
                 else:
                     db.session.rollback()
-                    return jsonify({"error": f"File {file.filename} is not allowed"}), 400
+                    return (
+                        jsonify({"error": f"File {file.filename} is not allowed"}),
+                        400,
+                    )
 
             db.session.commit()
             return jsonify(denuncia.to_dict())
         except Exception as e:
             print("Error:", e)
-            return (
-                jsonify({"error": "An error occurred while creating the denuncia"})
-            )
+            return jsonify({"error": "An error occurred while creating the denuncia"})
 
     @staticmethod
     def update_denuncia(id, data):
@@ -122,12 +141,6 @@ class DenunciaService:
             db.commit()
         return deleted_denuncia
 
-    @staticmethod
-    def get_denuncias_by_vecino(documento):
-        denuncias = (
-            db.session.execute.select(Denuncia).filter_by(documento=documento).scalars()
-        )
-        return denuncias
 
     @staticmethod
     def get_denuncias_by_sitio(id):
