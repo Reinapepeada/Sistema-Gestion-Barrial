@@ -34,11 +34,17 @@ def update_reclamo(id):
         return jsonify(updated_reclamo.to_dict()), 200
     return jsonify({'message': 'Reclamo not found'}), 404
 
-
+# traer sitios en los que se puede iniciar reclamo
 @reclamos_bp.route('/sitios', methods=['GET'])
 def get_sitios():
     return ReclamoController.get_all_sitios()
 
+# traer sitios en los que un inspector puede iniciar reclamo
+@reclamos_bp.route('/sitios-inspector/<string:legajo>', methods=['GET'])
+def get_sitios_by_inspector(legajo):
+    return ReclamoController.get_sitios_by_inspector(legajo)
+
+# traer desperfectos que se pueden reportar
 @reclamos_bp.route('/desperfectos', methods=['GET'])
 def get_desperfectos():
     return ReclamoController.get_all_desperfectos()

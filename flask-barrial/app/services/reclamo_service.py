@@ -150,10 +150,6 @@ class ReclamoService:
                 })
         return jsonify(reclamos)
     
-    @staticmethod
-    def get_reclamos_by_sitio(id):
-        reclamos = db.session.execute(db.select(Reclamo).filter_by(idSitio=id)).scalars()
-        return reclamos
     
     @staticmethod
     def get_all_sitios():
@@ -161,6 +157,25 @@ class ReclamoService:
         if sitios:
             return sitios
         raise Exception("No se han encontrado sitios")
+    
+    @staticmethod
+    def get_sitios_by_inspector(legajo):
+        if not db.session.execute(db.select(Personal).filter_by(legajo=legajo)).scalar():
+            raise Exception("No se ha encontrado el inspector")
+        inspector = db.session.execute(db.select(Personal).filter_by(legajo=legajo)).scalar()
+        sector = inspector.sector
+        sitios = db.session.execute(db.select(Sitio)).scalars().all()
+
+        # remover los sitios que no estan a cargo del inspector
+        sitios = [sitio for sitio in sitios if sitio.aCargoDe in sector]
+        sitios_dict = []
+        for sitio in sitios:
+                sitios_dict.append({
+                    "idSitio": sitio.idSitio,
+                    "descripcion": sitio.descripcion,
+                })
+        print("Sitios:", sitios)
+        return jsonify(sitios_dict)
     
     @staticmethod
     def get_all_desperfectos():

@@ -67,6 +67,14 @@ class ReclamoController:
             return jsonify({"error": str(e)}), 500
         
     @staticmethod
+    def get_sitios_by_inspector(legajo):
+       
+            sitios = ReclamoService.get_sitios_by_inspector(legajo)
+            if sitios:
+                return sitios, 200
+        
+        
+    @staticmethod
     def get_all_desperfectos():
         try:
             desperfectosAll = ReclamoService.get_all_desperfectos()
