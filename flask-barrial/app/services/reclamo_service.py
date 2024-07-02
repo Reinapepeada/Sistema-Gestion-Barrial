@@ -196,15 +196,27 @@ class ReclamoService:
             for foto in fotos:
                 fotosArray.append(foto.ruta)
             
+            # buscar sitio
+            sitio=db.session.execute(db.select(Sitio).filter_by(idSitio=reclamo.idSitio)).scalar()
+            desperfecto=db.session.execute(db.select(Desperfecto).filter_by(idDesperfecto=reclamo.idDesperfecto)).scalar()
+            # intenta traer al usuario de vecinos
+            usuario = db.session.execute(db.select(Vecino).filter_by(documento=reclamo.documento)).scalar()
+            if usuario is None:
+                # si no lo encuentra, intenta traer al usuario de personal
+                usuario = db.session.execute(db.select(Personal).filter_by(legajo=reclamo.documento)).scalar()
+            
             reclamos_dict.append({
-                'idReclamo': reclamo.idReclamo,
-                'documento': reclamo.documento,
-                'idSitio': reclamo.idSitio,
-                'idDesperfecto': reclamo.idDesperfecto,
-                'descripcion': reclamo.descripcion,
-                'estado': reclamo.estado,
-                'idReclamoUnificado': reclamo.idReclamoUnificado,
-                'fotos': fotosArray
+                    'idReclamo': reclamo.idReclamo,
+                    'documento': reclamo.documento,
+                    'usuario': usuario.to_dict() if usuario else None,
+                    'idSitio': reclamo.idSitio,
+                    'sitio': sitio.descripcion,
+                    'idDesperfecto': reclamo.idDesperfecto,
+                    'desperfecto': desperfecto.descripcion,
+                    'descripcion': reclamo.descripcion,
+                    'estado': reclamo.estado,
+                    'idReclamoUnificado': reclamo.idReclamoUnificado,
+                    'fotos': fotosArray
             })
 
 
