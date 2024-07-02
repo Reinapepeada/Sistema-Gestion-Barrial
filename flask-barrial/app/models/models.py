@@ -93,6 +93,7 @@ class Denuncia(db.Model):
     estado = db.Column(db.String, nullable=False)
     aceptaResponsabilidad = db.Column(db.Boolean, nullable=False)
     ubicacion=db.Column(db.String, nullable=False)
+    horayFecha = db.Column(db.DateTime, nullable=True)
     def to_dict(self):
         return {
             'idDenuncias': self.idDenuncias,
@@ -103,7 +104,8 @@ class Denuncia(db.Model):
             'descripcion': self.descripcion,
             'estado': self.estado,
             'aceptaResponsabilidad': self.aceptaResponsabilidad,
-            'ubicacion': self.ubicacion
+            'ubicacion': self.ubicacion,
+            'horayFecha': self.horayFecha
         }
 
 class Sitio(db.Model):

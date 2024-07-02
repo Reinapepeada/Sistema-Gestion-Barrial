@@ -1,3 +1,4 @@
+import datetime
 from flask import jsonify, request
 from app import db
 from app.models.models import Denuncia, FotosDenuncias
@@ -37,9 +38,35 @@ class DenunciaService:
     @staticmethod
     def get_denuncias_by_vecino(documento):
         print("Denuncias:", "llego aca")
-        denuncias = db.session.execute(
+        denuncias=[]
+        denunciasSelect = db.session.execute(
             db.select(Denuncia).filter_by(documento=documento)
         ).scalars()
+
+
+        for denuncia in denunciasSelect:
+            if denuncia.horayFecha is datetime.datetime:
+                date=denuncia.horayFecha
+                date=date.strftime("%d/%m/%Y %H:%M:%S")
+            else:
+                date="no se registro fecha y hora"
+            denuncias.append({
+                "idDenuncias": denuncia.idDenuncias,
+                "comercio": denuncia.comercio,
+                "tipoDenuncia": denuncia.tipoDenuncia,
+                "descripcion": denuncia.descripcion,
+                "estado": denuncia.estado,
+                "aceptaResponsabilidad": denuncia.aceptaResponsabilidad,
+                "ubicacion": denuncia.ubicacion,
+                "horayFecha": date,
+                "denunciadoDocumento": denuncia.denunciadoDocumento,
+                "documento": denuncia.documento
+            })
+        return jsonify(denuncias)
+            
+
+
+
         return denuncias
 
     @staticmethod
@@ -47,7 +74,25 @@ class DenunciaService:
         denuncias = db.session.execute(
             db.select(Denuncia).filter_by(denunciadoDocumento=documento)
         ).scalars()
-        return denuncias
+        for denuncia in denunciasSelect:
+            if denuncia.horayFecha is datetime.datetime:
+                date=denuncia.horayFecha
+                date=date.strftime("%d/%m/%Y %H:%M:%S")
+            else:
+                date="no se registro fecha y hora"
+            denuncias.append({
+                "idDenuncias": denuncia.idDenuncias,
+                "comercio": denuncia.comercio,
+                "tipoDenuncia": denuncia.tipoDenuncia,
+                "descripcion": denuncia.descripcion,
+                "estado": denuncia.estado,
+                "aceptaResponsabilidad": denuncia.aceptaResponsabilidad,
+                "ubicacion": denuncia.ubicacion,
+                "horayFecha": date,
+                "denunciadoDocumento": denuncia.denunciadoDocumento,
+                "documento": denuncia.documento
+                })
+        return jsonify(denuncias)
 
     @staticmethod
     def get_denuncia_by_id(id):
@@ -65,6 +110,8 @@ class DenunciaService:
 
             files = request.files.getlist("files")
             print("Received files:", files)
+            # sacar hora y fecha actual
+            horaYFecha = datetime.now()
 
             # validar que tipo de denuncia es si es a persona o comercio
 
@@ -76,6 +123,7 @@ class DenunciaService:
                     estado="pendiente",
                     aceptaResponsabilidad=False,
                     ubicacion=data["ubicacion"],
+                    horaYFecha=horaYFecha
                 )
             else:
                 denuncia = Denuncia(
@@ -86,6 +134,7 @@ class DenunciaService:
                     denunciadoDocumento=data["denunciadoDocumento"],
                     aceptaResponsabilidad=False,
                     ubicacion=data["ubicacion"],
+                    horaYFecha=horaYFecha
                 )
 
             db.session.add(denuncia)
@@ -142,7 +191,3 @@ class DenunciaService:
         return deleted_denuncia
 
 
-    @staticmethod
-    def get_denuncias_by_sitio(id):
-        denuncias = db.session.execute.select(Denuncia).filter_by(idSitio=id).scalars()
-        return denuncias
