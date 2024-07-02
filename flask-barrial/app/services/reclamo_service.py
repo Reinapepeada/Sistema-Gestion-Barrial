@@ -130,7 +130,7 @@ class ReclamoService:
                 usuario = db.session.execute(db.select(Vecino).filter_by(documento=reclamo.documento)).scalar()
                 if usuario is None:
                     # si no lo encuentra, intenta traer al usuario de personal
-                    usuario = db.session.execute(db.select(Personal).filter_by(legajo=reclamo.legajo)).scalar()
+                    usuario = db.session.execute(db.select(Personal).filter_by(legajo=reclamo.documento)).scalar()
                 fotos = db.session.execute(db.select(FotosReclamos).filter_by(reclamoid=reclamo.idReclamo)).scalars().all()
                 fotosArray = []
                 for foto in fotos:
@@ -168,3 +168,49 @@ class ReclamoService:
         if desperfectos:
             return desperfectos
         raise Exception("No se han encontrado desperfectos")
+    
+    @staticmethod
+    def get_reclamos_by_inspector(documento):
+        if not db.session.execute(db.select(Personal).filter_by(legajo=documento)).scalar():
+            raise Exception("No se ha encontrado el inspector")
+        # buscar inspector por legajo
+        inspector = db.session.execute(db.select(Personal).filter_by(legajo=documento)).scalar()
+        # alamcenar el sector del inspector
+        sector = inspector.sector
+        print("Sector:", sector)
+        # traer todos los sitios 
+        sitios = db.session.execute(db.select(Sitio)).scalars().all()
+        # por cada sitio, ver si su sector esta dentro del sector del inspector(tiene espacios de mas el sector del inspector)
+        sitios = [sitio for sitio in sitios if sitio.aCargoDe in sector]
+        print("Sitios:", sitios)
+        # buscar reclamos que tenga el sitio en el que el inspector esta a cargo
+        reclamos = []
+        for sitio in sitios:
+            reclamos.extend(db.session.execute(db.select(Reclamo).filter_by(idSitio=sitio.idSitio)).scalars().all())
+        print("Reclamos:", reclamos)
+        # meter array de fotos en cada reclamo
+        reclamos_dict = []
+        for reclamo in reclamos:
+            fotos = db.session.execute(db.select(FotosReclamos).filter_by(reclamoid=reclamo.idReclamo)).scalars().all()
+            fotosArray = []
+            for foto in fotos:
+                fotosArray.append(foto.ruta)
+            
+            reclamos_dict.append({
+                'idReclamo': reclamo.idReclamo,
+                'documento': reclamo.documento,
+                'idSitio': reclamo.idSitio,
+                'idDesperfecto': reclamo.idDesperfecto,
+                'descripcion': reclamo.descripcion,
+                'estado': reclamo.estado,
+                'idReclamoUnificado': reclamo.idReclamoUnificado,
+                'fotos': fotosArray
+            })
+
+
+
+
+        return jsonify(reclamos_dict)
+
+
+

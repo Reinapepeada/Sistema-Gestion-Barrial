@@ -42,3 +42,7 @@ def get_sitios():
 @reclamos_bp.route('/desperfectos', methods=['GET'])
 def get_desperfectos():
     return ReclamoController.get_all_desperfectos()
+
+@reclamos_bp.route('/inspector/<string:documento>', methods=['GET'])
+def get_reclamos_by_inspector(documento):
+    return ReclamoController.get_reclamos_by_inspector(documento)

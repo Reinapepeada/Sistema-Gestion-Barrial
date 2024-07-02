@@ -77,3 +77,12 @@ class ReclamoController:
             return desperfectos, 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
+        
+    @staticmethod
+    def get_reclamos_by_inspector(documento):
+        try:
+            reclamos = ReclamoService.get_reclamos_by_inspector(documento)
+            if reclamos:
+                return reclamos, 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
