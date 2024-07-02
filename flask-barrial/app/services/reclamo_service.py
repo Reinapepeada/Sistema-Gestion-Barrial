@@ -79,7 +79,7 @@ class ReclamoService:
                 if allowed_file(file.filename):
                     filename = secure_filename(file.filename)
                     unique_filename = f"{uuid.uuid4().hex}_{filename}"
-                    file_path = os.path.join(os.getcwd(), 'uploads', unique_filename)
+                    file_path = os.path.join(os.getcwd(), '/app/uploads', unique_filename)
                     file.save(file_path)
                     ruta_relativa = f"uploads/{unique_filename}"
                     foto = FotosReclamos(reclamoid=new_reclamo.idReclamo, ruta=ruta_relativa)
