@@ -93,7 +93,9 @@ class Denuncia(db.Model):
     estado = db.Column(db.String, nullable=False)
     aceptaResponsabilidad = db.Column(db.Boolean, nullable=False)
     ubicacion=db.Column(db.String, nullable=False)
-    horayFecha = db.Column(db.DateTime, nullable=True)
+    # crear con la fecha y hora actual
+    horayFecha = db.Column(db.DateTime, nullable=False)
+
     def to_dict(self):
         return {
             'idDenuncias': self.idDenuncias,
