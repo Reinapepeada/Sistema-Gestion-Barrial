@@ -107,7 +107,7 @@ class Denuncia(db.Model):
             'estado': self.estado,
             'aceptaResponsabilidad': self.aceptaResponsabilidad,
             'ubicacion': self.ubicacion,
-            'horayFecha': self.horayFecha
+            'horayFecha': self.horayFecha.strftime('%Y-%m-%d %H:%M:%S') 
         }
 
 class Sitio(db.Model):
