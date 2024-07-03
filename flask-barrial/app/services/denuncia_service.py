@@ -112,6 +112,7 @@ class DenunciaService:
             files = request.files.getlist("files")
             print("Received files:", files)
             # sacar hora y fecha actual
+            horaYFecha = datetime.datetime.now()
 
             # validar que tipo de denuncia es si es a persona o comercio
 
@@ -123,6 +124,7 @@ class DenunciaService:
                     estado="pendiente",
                     aceptaResponsabilidad=False,
                     ubicacion=data["ubicacion"],
+                    horayFecha=horaYFecha
                 )
             else:
                 denuncia = Denuncia(
@@ -133,6 +135,7 @@ class DenunciaService:
                     denunciadoDocumento=data["denunciadoDocumento"],
                     aceptaResponsabilidad=False,
                     ubicacion=data["ubicacion"],
+                    horaYFecha=horaYFecha
                 )
 
             db.session.add(denuncia)
