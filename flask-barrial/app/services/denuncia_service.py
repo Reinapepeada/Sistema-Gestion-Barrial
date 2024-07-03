@@ -124,7 +124,7 @@ class DenunciaService:
                     estado="pendiente",
                     aceptaResponsabilidad=False,
                     ubicacion=data["ubicacion"],
-                    horaYFecha=horaYFecha
+                    horayFecha=horaYFecha
                 )
             else:
                 denuncia = Denuncia(
