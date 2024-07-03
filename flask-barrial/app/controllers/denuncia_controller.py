@@ -55,7 +55,7 @@ class DenunciaController:
         try:
             denuncias = DenunciaService.get_denuncias_by_denunciado(documento)
             if denuncias:
-                denuncias, 200
+               return denuncias, 200
         except Exception as e:
             print("Error:", e)
             return jsonify({"error": "An error occurred while fetching the denuncias"}), 500

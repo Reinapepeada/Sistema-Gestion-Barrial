@@ -71,7 +71,8 @@ class DenunciaService:
 
     @staticmethod
     def get_denuncias_by_denunciado(documento):
-        denuncias = db.session.execute(
+        denuncias=[]
+        denunciasSelect = db.session.execute(
             db.select(Denuncia).filter_by(denunciadoDocumento=documento)
         ).scalars()
         for denuncia in denunciasSelect:
