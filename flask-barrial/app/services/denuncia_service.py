@@ -112,7 +112,7 @@ class DenunciaService:
             files = request.files.getlist("files")
             print("Received files:", files)
             # sacar hora y fecha actual
-            horaYFecha = datetime.now()
+            horaYFecha = datetime.datetime.now()
 
             # validar que tipo de denuncia es si es a persona o comercio
 
