@@ -45,11 +45,9 @@ class DenunciaService:
 
 
         for denuncia in denunciasSelect:
-            if denuncia.horayFecha is datetime.datetime:
-                date=denuncia.horayFecha
-                date=date.strftime("%d/%m/%Y %H:%M:%S")
-            else:
-                date="no se registro fecha y hora"
+            
+            date=denuncia.horayFecha
+            date=date.strftime("%d/%m/%Y %H:%M:%S")
             denuncias.append({
                 "idDenuncias": denuncia.idDenuncias,
                 "comercio": denuncia.comercio,
@@ -67,8 +65,6 @@ class DenunciaService:
 
 
 
-        return denuncias
-
     @staticmethod
     def get_denuncias_by_denunciado(documento):
         denuncias=[]
@@ -76,11 +72,9 @@ class DenunciaService:
             db.select(Denuncia).filter_by(denunciadoDocumento=documento)
         ).scalars()
         for denuncia in denunciasSelect:
-            if denuncia.horayFecha is datetime.datetime:
-                date=denuncia.horayFecha
-                date=date.strftime("%d/%m/%Y %H:%M:%S")
-            else:
-                date="no se registro fecha y hora"
+            date=denuncia.horayFecha
+            date=date.strftime("%d/%m/%Y %H:%M:%S")
+            
             denuncias.append({
                 "idDenuncias": denuncia.idDenuncias,
                 "comercio": denuncia.comercio,
