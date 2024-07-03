@@ -112,10 +112,9 @@ class Usuario_service:
     @staticmethod
     def change_password(data):
         print(data)
-        data['documento'] = 'DNI' + data['documento']
         vecino = db.session.execute(db.select(Vecino).filter_by(documento=data['documento'])).scalar()
-        if vecino and check_password_hash(vecino.password, data['old_password']):
-            hashed_password = generate_password_hash(data['new_password'])
+        if vecino and check_password_hash(vecino.password, data['currentPassword']):
+            hashed_password = generate_password_hash(data['newPassword'])
             vecino.password = hashed_password
             db.session.commit()
             return vecino.to_dict()

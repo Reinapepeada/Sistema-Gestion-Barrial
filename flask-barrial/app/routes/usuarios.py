@@ -41,7 +41,7 @@ def forgot_password():
     data = request.get_json()
     return UsuarioController.forgot_password(data)
 
-@usuarios_bp.route('/change-password', methods=['post'])
+@usuarios_bp.route('/change-password/', methods=['post'])
 def change_password():
     data = request.get_json()
     return UsuarioController.change_password(data)
