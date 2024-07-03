@@ -98,17 +98,14 @@ class DenunciaService:
 
     @staticmethod
     def create_denuncia():
-        #    modelo de lo que viene en el form {"_parts": [["denunciaType", "comercio"], ["comercio", "aaaaaaa"], ["ubicacion", "sdfsdf"], ["descripcion", "dsfsd"], ["files", [Object]], ["files", [Object]], ["files", [Object]]]}
         try:
             data = request.form
             print("Received data:", data)
 
             files = request.files.getlist("files")
             print("Received files:", files)
-            # sacar hora y fecha actual
             horaYFecha = datetime.datetime.now()
-
-            # validar que tipo de denuncia es si es a persona o comercio
+            documento = data.get("documento", None)
 
             if data["denunciaType"] == "comercio":
                 denuncia = Denuncia(
@@ -118,18 +115,19 @@ class DenunciaService:
                     estado="pendiente",
                     aceptaResponsabilidad=False,
                     ubicacion=data["ubicacion"],
-                    horayFecha=horaYFecha
+                    horayFecha=horaYFecha,
+                    documento=documento
                 )
             else:
                 denuncia = Denuncia(
-                    documento=data["documento"],
+                    documento=documento,
                     tipoDenuncia=data["denunciaType"],
                     descripcion=data["descripcion"],
                     estado="pendiente",
                     denunciadoDocumento=data["denunciadoDocumento"],
                     aceptaResponsabilidad=False,
                     ubicacion=data["ubicacion"],
-                    horaYFecha=horaYFecha
+                    horayFecha=horaYFecha  # Asegúrate de que el nombre sea correcto
                 )
 
             db.session.add(denuncia)
@@ -141,7 +139,7 @@ class DenunciaService:
                 if allowed_file(file.filename):
                     filename = secure_filename(file.filename)
                     unique_filename = f"{uuid.uuid4().hex}_{filename}"
-                    file_path = os.path.join(os.getcwd(), '/app/uploads', unique_filename)
+                    file_path = os.path.join(os.getcwd(), 'app/uploads', unique_filename)
                     file.save(file_path)
                     ruta_relativa = f"uploads/{unique_filename}"
                     foto = FotosDenuncias(
@@ -150,10 +148,7 @@ class DenunciaService:
                     db.session.add(foto)
                 else:
                     db.session.rollback()
-                    return (
-                        jsonify({"error": f"File {file.filename} is not allowed"}),
-                        400,
-                    )
+                    return jsonify({"error": f"File {file.filename} is not allowed"}), 400
 
             db.session.commit()
             return jsonify(denuncia.to_dict())
