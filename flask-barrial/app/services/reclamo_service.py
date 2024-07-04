@@ -40,6 +40,7 @@ class ReclamoService:
         reclamo = db.session.execute(db.select(Reclamo).filter_by(idReclamo=id)).scalar()
         return reclamo
 
+
     @staticmethod
     def create_reclamo():
         try:
@@ -57,9 +58,8 @@ class ReclamoService:
                 print(f"Error: Sitio {data['sitio']} does not exist")
                 return jsonify({"error": "The specified sitio does not exist."}), 400
 
-            #  convertir a integer
+            # Convert to integer
             sitio = int(data['sitio'])
-            #  convertir a integer
             desper = int(data['desperfecto'])
 
             new_reclamo = Reclamo(
@@ -73,13 +73,18 @@ class ReclamoService:
             db.session.commit()
             print("New reclamo:", new_reclamo)
 
-            # Save photos and associate them with the servicio
+            # Ensure the upload directory exists
+            upload_folder = os.path.join(os.getcwd(), 'app', 'uploads')
+            if not os.path.exists(upload_folder):
+                os.makedirs(upload_folder)
+
+            # Save photos and associate them with the reclamo
             for file in files:
                 print("File:", file)
                 if allowed_file(file.filename):
                     filename = secure_filename(file.filename)
                     unique_filename = f"{uuid.uuid4().hex}_{filename}"
-                    file_path = os.path.join(os.getcwd(), '/app/uploads', unique_filename)
+                    file_path = os.path.join(upload_folder, unique_filename)
                     file.save(file_path)
                     ruta_relativa = f"uploads/{unique_filename}"
                     foto = FotosReclamos(reclamoid=new_reclamo.idReclamo, ruta=ruta_relativa)

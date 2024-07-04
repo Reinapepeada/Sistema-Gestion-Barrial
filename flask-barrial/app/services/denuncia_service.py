@@ -134,12 +134,17 @@ class DenunciaService:
             db.session.commit()
             print("Denuncia creada con exito", denuncia)
 
+                         # Ensure the upload directory exists
+            upload_folder = os.path.join(os.getcwd(), 'app', 'uploads')
+            if not os.path.exists(upload_folder):
+                os.makedirs(upload_folder)
+
             for file in files:
                 print("File:", file)
                 if allowed_file(file.filename):
                     filename = secure_filename(file.filename)
                     unique_filename = f"{uuid.uuid4().hex}_{filename}"
-                    file_path = os.path.join(os.getcwd(), 'app/uploads', unique_filename)
+                    file_path = os.path.join(upload_folder, unique_filename)
                     file.save(file_path)
                     ruta_relativa = f"uploads/{unique_filename}"
                     foto = FotosDenuncias(

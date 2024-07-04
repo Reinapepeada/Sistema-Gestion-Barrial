@@ -93,13 +93,18 @@ class ServicioService:
             db.session.add(new_servicio)
             db.session.commit()
 
+             # Ensure the upload directory exists
+            upload_folder = os.path.join(os.getcwd(), 'app', 'uploads')
+            if not os.path.exists(upload_folder):
+                os.makedirs(upload_folder)
+
             # Save photos and associate them with the servicio
             for file in files:
                 print("File:", file)
                 if allowed_file(file.filename):
                     filename = secure_filename(file.filename)
                     unique_filename = f"{uuid.uuid4().hex}_{filename}"
-                    file_path = os.path.join(os.getcwd(), '/app/uploads', unique_filename)
+                    file_path = os.path.join(upload_folder, unique_filename)
                     file.save(file_path)
                     ruta_relativa = f"uploads/{unique_filename}"
                     foto = Foto(servicio_id=new_servicio.id, ruta=ruta_relativa)
