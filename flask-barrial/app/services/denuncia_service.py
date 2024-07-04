@@ -45,6 +45,11 @@ class DenunciaService:
 
 
         for denuncia in denunciasSelect:
+
+            fotos = db.session.execute(db.select(FotosDenuncias).filter_by(denunciaId=denuncia.idDenuncias)).scalars().all()
+            fotosArray = []
+            for foto in fotos:
+                fotosArray.append(foto.ruta)
             
             date=denuncia.horayFecha
             date=date.strftime("%d/%m/%Y %H:%M:%S")
@@ -58,7 +63,8 @@ class DenunciaService:
                 "ubicacion": denuncia.ubicacion,
                 "horayFecha": date,
                 "denunciadoDocumento": denuncia.denunciadoDocumento,
-                "documento": denuncia.documento
+                "documento": denuncia.documento,
+                "fotos": fotosArray
             })
         return jsonify(denuncias)
             
@@ -74,6 +80,11 @@ class DenunciaService:
         for denuncia in denunciasSelect:
             date=denuncia.horayFecha
             date=date.strftime("%d/%m/%Y %H:%M:%S")
+
+            fotos = db.session.execute(db.select(FotosDenuncias).filter_by(denunciaId=denuncia.idDenuncias)).scalars().all()
+            fotosArray = []
+            for foto in fotos:
+                fotosArray.append(foto.ruta)
             
             denuncias.append({
                 "idDenuncias": denuncia.idDenuncias,
@@ -85,7 +96,8 @@ class DenunciaService:
                 "ubicacion": denuncia.ubicacion,
                 "horayFecha": date,
                 "denunciadoDocumento": denuncia.denunciadoDocumento,
-                "documento": denuncia.documento
+                "documento": denuncia.documento,
+                "fotos": fotosArray
                 })
         return jsonify(denuncias)
 

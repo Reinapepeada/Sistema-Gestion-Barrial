@@ -45,4 +45,9 @@ def forgot_password():
 def change_password():
     data = request.get_json()
     return UsuarioController.change_password(data)
+
+@usuarios_bp.route('/<string:documento>', methods=['GET'])
+def get_usuario_by_documento(documento):
+    usuario = UsuarioController.get_usuario_by_documento(documento)
+    return jsonify(usuario)
     

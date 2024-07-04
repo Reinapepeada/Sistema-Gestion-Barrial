@@ -7,7 +7,7 @@ class UsuarioController:
     
     @staticmethod
     def get_usuario_by_documento(documento):
-        usuario_found = usuario_service.get_usuario_by_documento(documento)
+        usuario_found = Usuario_service.get_usuario_by_id(documento)
         if usuario_found:
             return usuario_found, 200
         

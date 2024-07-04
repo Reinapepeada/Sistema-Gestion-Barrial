@@ -45,8 +45,34 @@ class Usuario_service:
     
     @staticmethod
     def get_usuario_by_id(documento):
+        # se fija si existe en vecino
         vecino = db.session.execute(db.select(Vecino).filter_by(documento=documento)).scalar()
-        return vecino
+        
+        if vecino :
+            vecinojson = {
+                "documento": vecino.documento,
+                "nombre": vecino.nombre,
+                "apellido": vecino.apellido,
+                "direccion": vecino.direccion,
+                "email": vecino.email,
+                "codigoBarrio": vecino.codigoBarrio,
+                "tipo": "vecino"
+            }
+            return vecinojson
+        # se fija si existe en personal
+        personal = db.session.execute(db.select(Personal).filter_by(legajo=documento)).scalar()
+        if personal:
+            personaljson = {
+                "documento": personal.legajo,
+                "nombre": personal.nombre,
+                "apellido": personal.apellido,
+                "direccion": personal.direccion,
+                "codigoBarrio": personal.codigoBarrio,
+                "email": personal.email,
+                "tipo": "personal"
+            }
+            return personaljson
+        return None
     
     @staticmethod
     def first_login(data):
