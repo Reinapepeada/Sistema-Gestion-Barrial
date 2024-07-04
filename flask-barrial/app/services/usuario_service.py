@@ -66,9 +66,6 @@ class Usuario_service:
                 "documento": personal.legajo,
                 "nombre": personal.nombre,
                 "apellido": personal.apellido,
-                "direccion": personal.direccion,
-                "codigoBarrio": personal.codigoBarrio,
-                "email": personal.email,
                 "tipo": "personal"
             }
             return personaljson
